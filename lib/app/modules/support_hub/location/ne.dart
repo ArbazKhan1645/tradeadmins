@@ -22,10 +22,26 @@ class _AddMobilePhoneDrawerState extends State<AddMobilePhoneDrawer> {
   final TextEditingController brandNameController = TextEditingController();
   final TextEditingController basePriceController = TextEditingController();
   List<Map<String, dynamic>> questions = [
-    {'question': 'Is your Phone turned on?', 'options': []},
-    {'question': 'Is your Phone cracked on?', 'options': []},
-    {'question': 'Is your Phone networked on?', 'options': []},
-    {'question': 'Phone condition on?', 'options': []}
+    {
+      'question': 'Doess your Phone turned on?',
+      'options': [],
+    },
+    {
+      'question': 'What storage capacity is it?',
+      'options': [],
+    },
+    {
+      'question': 'Is it network locked or unlocked',
+      'options': [],
+    },
+    {
+      'question': 'Is the font or back cracked?',
+      'options': [],
+    },
+    {
+      'question': 'What condition best describe four device?',
+      'options': [],
+    }
   ];
 
   // void addQuestion() {
