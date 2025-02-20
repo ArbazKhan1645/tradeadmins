@@ -124,11 +124,11 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Total Terminals',
+                                        'Brand',
                                         style: TextStyle(color: Colors.grey),
                                       ),
                                       AutoSizeText(
-                                        '',
+                                        'Realme',
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 17,
