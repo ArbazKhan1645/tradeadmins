@@ -309,7 +309,7 @@ Future showNewLocationdialog(BuildContext context, List<BrandsModel> brandsList,
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AddMobilePhoneDrawer(
+        return AddMobilePhoneDrawers(
           brandsList: brandsList,
           typesList: typesList,
         );

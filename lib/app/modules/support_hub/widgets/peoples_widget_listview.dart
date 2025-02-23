@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:partner_hub/app/services/fetch_supabase.dart';
 import '../../../models/models/mobile_phones_model.dart';
 import '../controllers/support_hub_controller.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -69,15 +70,7 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                 maxLines: 1,
                                 minFontSize: 14,
                               ),
-                              AutoSizeText(
-                                '${location.brandName.toString()} - ${location..toString()}',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                minFontSize: 12,
-                              ),
+
                               // AutoSizeText(
                               //   '${location.city.toString()} - $countryname',
                               //   style: TextStyle(
@@ -139,46 +132,11 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.email,
-                                              color: Colors.grey.shade500),
-                                          SizedBox(width: 5),
-                                          TextButton(
-                                            onPressed: () {},
-                                            child: Text(
-                                              location.type.toString(),
-                                              style: TextStyle(
-                                                  color: Color(0xff5E85CC)),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.phone,
-                                              color: Colors.grey.shade500),
-                                          SizedBox(width: 5),
-                                          TextButton(
-                                            onPressed: () {},
-                                            child: Text(
-                                              location.createdAt.toString(),
-                                              style: TextStyle(
-                                                  color: Color(0xff5E85CC)),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 SizedBox(width: 20),
+                                Text(
+                                  'Questions',
+                                  style: TextStyle(color: Color(0xff5E85CC)),
+                                ),
                                 CircleAvatar(
                                   radius: 25,
                                   backgroundColor: index
@@ -215,9 +173,18 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                             productName:
                                                 location.name.toString(),
                                             onDelete: () async {
-                                              var con = Get.find<
-                                                  SupportHubController>();
-                                              return con.initializedData();
+                                              try {
+                                                var con = Get.find<
+                                                    SupportHubController>();
+                                                await supbaseClient
+                                                    .from('phones_models')
+                                                    .delete()
+                                                    .eq('id', location.id ?? 0);
+                                                con.initializedData();
+                                                return true;
+                                              } on Exception catch (e) {
+                                                return false;
+                                              }
                                             },
                                             onResult: (bool result) {
                                               if (result) {

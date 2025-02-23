@@ -21,7 +21,7 @@ class SupportHubLocations extends StatelessWidget {
             child: controller.filterselectedMerchantLocations.isEmpty
                 ? const Center(
                     child: Text(
-                        'No Locations Assigned to Partner Or No Location found for Search Query'),
+                        'No Model Added Yet or not found for Search Query'),
                   )
                 : ListView.separated(
                     separatorBuilder: (context, index) {
