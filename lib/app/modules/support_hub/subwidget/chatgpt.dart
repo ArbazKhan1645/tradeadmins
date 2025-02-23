@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:partner_hub/app/constants/constants_colors.dart';
+import 'package:partner_hub/app/models/models/mobile_phones_model.dart';
 import 'package:partner_hub/app/modules/support_hub/location/add_location.dart';
 import 'package:partner_hub/app/modules/support_hub/location/ne.dart'
     show AddMobilePhoneDrawer;
@@ -304,13 +305,15 @@ class ClientTable extends StatelessWidget {
 }
 
 Future showNewLocationdialog(BuildContext context, List<BrandsModel> brandsList,
-    List<TypesModel> typesList) {
+    List<TypesModel> typesList,
+    {MobilePhonesModel? model}) {
   return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AddMobilePhoneDrawers(
           brandsList: brandsList,
+          model: model,
           typesList: typesList,
         );
       });

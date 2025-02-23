@@ -4,14 +4,12 @@ import 'package:get/get.dart';
 import 'package:partner_hub/app/constants/constants_colors.dart';
 import 'package:partner_hub/app/modules/support_hub/widgets/homepage_view.dart';
 import 'package:partner_hub/app/modules/support_hub/widgets/sh_overview.dart';
-import 'package:partner_hub/app/modules/stastics_bar/views/stastics_bar_view.dart';
-
 import '../controllers/support_hub_controller.dart';
 import '../subwidget/chatgpt.dart';
 
 
 class SupportHubView extends GetView<SupportHubController> {
-  const SupportHubView({Key? key}) : super(key: key);
+  const SupportHubView({super.key});
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SupportHubController>(

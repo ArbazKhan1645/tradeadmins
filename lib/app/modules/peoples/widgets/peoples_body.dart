@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:partner_hub/app/models/models/users_model.dart/customer_models.dart';
 import 'package:partner_hub/app/modules/peoples/controllers/peoples_controller.dart';
 import 'package:partner_hub/app/modules/peoples/widgets/peoples_widget_gridview.dart';
-import 'package:partner_hub/app/modules/peoples/widgets/peoples_widget_listview.dart';
 import 'package:partner_hub/app/modules/stastics_bar/views/stastics_bar_view.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PeoplesViewBody extends StatelessWidget {
   const PeoplesViewBody({super.key});
@@ -13,137 +14,113 @@ class PeoplesViewBody extends StatelessWidget {
     return GetBuilder<PeoplesController>(builder: (controller) {
       return ListView(
         children: [
-          const StasticsBarView(),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300)),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Checklist - Employees Workers',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 22),
-                              ),
-                              const Text(
-                                  'The folloeing are the peoples those are linked working'),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  'Department1',
-                                  'Department2',
-                                  'Department3'
-                                ].map((e) {
-                                  bool isSelected =
-                                      e == controller.selectedStringTab.value;
-                                  return Container(
-                                    height: 45,
-                                    decoration: isSelected
-                                        ? BoxDecoration(
-                                            color: Colors.grey.shade300,
-                                            borderRadius:
-                                                BorderRadius.circular(12))
-                                        : null,
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            ],
-                          ),
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Customers',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22),
+                            ),
+                            const Text(
+                                'The folloeing are the peoples those are linked working'),
+                            const SizedBox(height: 20),
+                          ],
                         ),
                       ),
-                      Expanded(
-                          child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    controller.setPeoplesIsGrid();
-                                  },
-                                  icon: Icon(controller.peoplesIsGrid.value
-                                      ? Icons.list
-                                      : Icons.grid_view)),
-                              const SizedBox(width: 20),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 4,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: const TextField(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(Icons.search),
-                                      hintText: 'Search Peoples'),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: const Center(
-                                      child: Text(
-                                        'Add New People',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )),
-                              ),
-                              const SizedBox(width: 20),
-                            ],
-                          )
-                        ],
-                      ))
-                    ],
-                  ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 4,
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(12)),
+                      child: const TextField(
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Icon(Icons.search),
+                            hintText: 'Search Peoples'),
+                      ),
+                    ),
+                    SizedBox(width: 20)
+                  ],
                 ),
               ),
             ),
           ),
-          controller.peoplesIsGrid.value
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return const PeoplesItemWidgetListview();
-                  })
-              : GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: 20,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5),
-                  itemBuilder: (context, index) {
-                    return const PeoplesItemWidgetGridview();
-                  })
+          UsersGridView()
         ],
       );
     });
+  }
+}
+
+class UsersGridView extends StatelessWidget {
+  const UsersGridView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final supabase = Supabase.instance.client;
+
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: supabase.from('users').stream(primaryKey: ['id']),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No users found'));
+        }
+
+        final users = snapshot.data!
+            .map((user) => CustomerModel.fromJson(user))
+            .where((user) =>
+                user.firstName != 'N/A' &&
+                user.lastName != 'N/A' &&
+                user.email != 'N/A')
+            .toList();
+
+        return GridView.builder(
+          shrinkWrap: true,
+          itemCount: users.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            childAspectRatio: 1.0,
+          ),
+          itemBuilder: (context, index) {
+            CustomerModel user = users[index];
+            if (user.firstName == 'N/A') {
+              return Container();
+            }
+            if (user.lastName == 'N/A') {
+              return Container();
+            }
+            if (user.email == 'N/A') {
+              return Container();
+            }
+            return PeoplesItemWidgetGridview(user: user);
+          },
+        );
+      },
+    );
   }
 }

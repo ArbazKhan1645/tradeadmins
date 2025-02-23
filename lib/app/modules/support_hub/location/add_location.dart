@@ -16,9 +16,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddMobilePhoneDrawers extends StatefulWidget {
   const AddMobilePhoneDrawers(
-      {super.key, required this.brandsList, required this.typesList});
+      {super.key,
+      required this.brandsList,
+      required this.typesList,
+      this.model});
   final List<BrandsModel> brandsList;
   final List<TypesModel> typesList;
+  final MobilePhonesModel? model;
 
   @override
   State<AddMobilePhoneDrawers> createState() => _AddMobilePhoneDrawersState();
@@ -51,6 +55,32 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
       'options': [],
     }
   ];
+
+  fetchInitially() {
+    if (widget.model != null) {
+      nameController.text = widget.model!.name.toString();
+      brandNameController.text = widget.model!.brandName.toString();
+      basePriceController.text = widget.model!.base_price.toString();
+      var con = Get.put(LocationControllerProvider());
+      con.selectedBrand = widget.model!.brands!.toString();
+      con.selectedType = widget.model!.type!.toString();
+
+      questions = widget.model!.questions!
+          .map((ele) => {
+                'question': ele['question'],
+                'options': (ele['options'] as List<dynamic>)
+                    .map((opt) => {
+                          'answer': TextEditingController(text: opt['answer']),
+                          'price_adjustment': TextEditingController(
+                              text: opt['price_adjustment'].toString()),
+                        })
+                    .toList(),
+              })
+          .toList();
+
+      setState(() {});
+    }
+  }
 
   void addOption(int index) {
     setState(() {
@@ -124,6 +154,12 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  void initState() {
+    fetchInitially();
+    super.initState();
   }
 
   @override
@@ -265,7 +301,11 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
                                                     }
                                                     return null;
                                                   },
-                                                  value: null,
+                                                  value: (controller
+                                                          .selectedBrand
+                                                          .isNotEmpty)
+                                                      ? controller.selectedBrand
+                                                      : null,
                                                   onChanged: (value) {
                                                     if (value == null) return;
                                                     controller.selectedBrand =
@@ -342,7 +382,11 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
                                                     }
                                                     return null;
                                                   },
-                                                  value: null,
+                                                  value: (controller
+                                                          .selectedType
+                                                          .isNotEmpty)
+                                                      ? controller.selectedType
+                                                      : null,
                                                   onChanged: (value) {
                                                     if (value == null) return;
                                                     controller.selectedType =
@@ -572,11 +616,27 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
                                                             .toList()
                                                       };
 
+                                                      if (widget.model !=
+                                                          null) {
+                                                        await Supabase
+                                                            .instance.client
+                                                            .from(
+                                                                'phones_models')
+                                                            .update(mobilePhone)
+                                                            .eq(
+                                                                'id',
+                                                                widget.model!.id
+                                                                    .toString());
+                                                      } else {
+                                                        await Supabase
+                                                            .instance.client
+                                                            .from(
+                                                                'phones_models')
+                                                            .insert(
+                                                                mobilePhone);
+                                                      }
+
                                                       // Save to Supabase
-                                                      await Supabase
-                                                          .instance.client
-                                                          .from('phones_models')
-                                                          .insert(mobilePhone);
 
                                                       Navigator.of(context)
                                                           .pop();

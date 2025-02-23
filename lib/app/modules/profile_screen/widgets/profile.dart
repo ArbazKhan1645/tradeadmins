@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
+import 'package:partner_hub/app/modules/profile_screen/model/order_model.dart';
 import 'package:partner_hub/app/modules/profile_screen/widgets/details.dart';
+import 'package:partner_hub/app/modules/support_hub/location/controller.dart';
 import 'package:partner_hub/app/modules/support_hub/widgets/homepage_header.dart';
 
 import '../controllers/profile_screen_controller.dart';
@@ -22,7 +24,8 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
       child: Column(
         children: [
           SizedBox(height: 20),
@@ -58,13 +61,14 @@ class _OrderScreenState extends State<OrderScreen> {
             ),
           ),
           SizedBox(height: 20),
-          controller.selectedOrder == null
-              ? _buildOrdersList()
-              : Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: OrderTrackingPage(),
-                ),
-          SizedBox(height: 200),
+          Expanded(
+            child: controller.selectedOrder == null
+                ? _buildOrdersList()
+                : Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: OrderTrackingPage(),
+                  ),
+          )
         ],
       ),
     );
@@ -129,10 +133,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
       if (controller.orders.isEmpty) {
         return Center(
-            child: Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: Text('No orders found'),
-        ));
+          child: Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: Text('No orders found'),
+          ),
+        );
       }
 
       return ListView.builder(
@@ -140,14 +145,23 @@ class _OrderScreenState extends State<OrderScreen> {
         itemCount: controller.orders.length,
         itemBuilder: (context, index) {
           final order = controller.orders[index];
+          final isBooked = order.status == 'booked';
+          final isCompleted = order.status == 'Completed';
+          final inProgress = order.status == 'In Progress';
+          final isRejected = order.status == 'Rejected';
+
           return Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300)),
+                color:
+                    getStatusColor(order.status.toString()).withOpacity(0.10),
+                border: Border.all(
+                    width: isBooked ? 1 : 2,
+                    color: getStatusColor(order.status.toString())),
+              ),
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
                     if (order.models != null)
@@ -162,42 +176,74 @@ class _OrderScreenState extends State<OrderScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Order No: ${order.orderNumber}',
+                                'Order No: ${order.orderNumber} - ${order.id}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              const Spacer(),
+                              if (isBooked)
+                                Row(
+                                  children: [
+                                    MaterialButton(
+                                      color: Colors.green,
+                                      onPressed: () async {
+                                        await _updateOrderStatus(
+                                          order,
+                                          'In Progress',
+                                          'Your Order has been Accepted',
+                                          'Your Order is in In Progress, We are working on it',
+                                        );
+                                      },
+                                      child: const Text(
+                                        'Accept',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    MaterialButton(
+                                      color: Colors.red,
+                                      onPressed: () =>
+                                          _showRejectionDialog(order),
+                                      child: const Text(
+                                        'Reject',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               TextButton(
                                 onPressed: () {
                                   controller.selectedOrder = order;
                                   controller.updateBrowserURL(
                                       controller.selectedOrder?.id.toString() ??
                                           '-1');
-
                                   setState(() {});
                                 },
                                 child: Text(
-                                  'View Order Status',
+                                  isRejected
+                                      ? 'Order has been rejected : View'
+                                      : 'View Order Status',
                                   style: TextStyle(
-                                    color: Colors.green,
+                                    color:
+                                        isRejected ? Colors.red : Colors.green,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                          SizedBox(height: 8),
                           Text(
-                              'Placed On: ${formatOrderDate(order.createdAt ?? DateTime.now())}',
-                              style: TextStyle(color: Colors.grey)),
+                            'Placed On: ${formatOrderDate(order.createdAt ?? DateTime.now())}',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -209,6 +255,95 @@ class _OrderScreenState extends State<OrderScreen> {
         },
       );
     });
+  }
+
+  Future<void> _updateOrderStatus(
+    OrderModel order,
+    String status,
+    String acceptedDescription,
+    String inProgressDescription,
+  ) async {
+    try {
+      final timeline =
+          (order.timeline)?.map((e) => e as Map<String, dynamic>).toList() ??
+              [];
+
+      timeline.add({
+        "date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        "time": DateFormat('HH:mm').format(DateTime.now()),
+        "status": status,
+        "description": acceptedDescription,
+      });
+
+      if (status == 'In Progress') {
+        timeline.add({
+          "date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          "time": DateFormat('HH:mm').format(DateTime.now()),
+          "status": "In Progress",
+          "description": inProgressDescription,
+        });
+      }
+
+      await supbaseClient.from('orders').update({
+        'timeline': timeline,
+        'status': status,
+      }).eq('id', order.id.toString());
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update order status: $e')),
+      );
+    }
+  }
+
+  void _showRejectionDialog(OrderModel order) {
+    final reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Reject Order'),
+          content: SizedBox(
+            width: 400,
+            height: 300,
+            child: TextField(
+              maxLines: 9,
+              controller: reasonController,
+              decoration: InputDecoration(
+                fillColor: Colors.grey.shade200,
+                filled: true,
+                hintText: 'Enter reason for rejection',
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (reasonController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter a reason')),
+                  );
+                  return;
+                }
+
+                Navigator.pop(context);
+                await _updateOrderStatus(
+                  order,
+                  'Rejected',
+                  'Your Order has been Rejected - Reason: ${reasonController.text}',
+                  reasonController.text,
+                );
+              },
+              child: Text('Reject'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

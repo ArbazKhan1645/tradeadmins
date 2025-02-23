@@ -120,6 +120,10 @@ class SupportHubController extends GetxController {
 
   initializedData() async {
     try {
+      brandOptions.clear();
+      brandsList.clear();
+      typesList.clear();
+      typesOptions.clear;
       print(_userController.currentUser!.id);
       await fetchAllBrands(Get.context!);
       await fetchAllTypes(Get.context!);

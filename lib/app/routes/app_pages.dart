@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:partner_hub/app/modules/profile_screen/bindings/profile_screen_binding.dart';
+import 'package:partner_hub/app/modules/profile_screen/views/profile_screen_view.dart';
 
 import '../middlewares/auth_middleware.dart';
 import '../modules/Home/bindings/home_binding.dart';
@@ -39,6 +41,11 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+    ),
+      GetPage(
+      name: _Paths.PROFILE_SCREEN,
+      page: () => const ProfileScreenView(),
+      binding: ProfileScreenBinding(),
     ),
 
     GetPage(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:partner_hub/app/modules/support_hub/subwidget/chatgpt.dart';
 import 'package:partner_hub/app/services/fetch_supabase.dart';
 import '../../../models/models/mobile_phones_model.dart';
 import '../controllers/support_hub_controller.dart';
@@ -144,7 +145,16 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                       : Colors.transparent,
                                   child: Center(
                                     child: IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showNewLocationdialog(
+                                                  model: location,
+                                                  context,
+                                                  controller.brandsList,
+                                                  controller.typesList)
+                                              .then((a) {
+                                            controller.initializedData();
+                                          });
+                                        },
                                         icon: Icon(
                                             index
                                                 ? Icons.arrow_downward

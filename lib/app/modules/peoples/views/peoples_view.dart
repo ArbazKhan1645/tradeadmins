@@ -5,7 +5,7 @@ import 'package:partner_hub/app/modules/peoples/widgets/peoples_body.dart';
 import '../controllers/peoples_controller.dart';
 
 class PeoplesView extends GetView<PeoplesController> {
-  const PeoplesView({Key? key}) : super(key: key);
+  const PeoplesView({super.key});
   @override
   Widget build(BuildContext context) {
     return GetBuilder<PeoplesController>(

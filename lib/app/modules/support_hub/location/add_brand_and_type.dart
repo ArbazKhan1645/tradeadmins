@@ -176,30 +176,28 @@ class _AddBrandsAndTypeState extends State<AddBrandsAndType> {
                       GestureDetector(
                         onTap: () async {
                           if (isloading == false) {
-                            if (namecontroller.text.isNotEmpty) {
-                              errorText = '';
-                              setLoading(true);
-                              try {
-                                if (namecontroller.text.isNotEmpty) {
-                                  await supbaseClient.from('brands').insert({
-                                    'name': namecontroller.text,
-                                  });
-                                }
-
-                                if (typecontroller.text.isNotEmpty) {
-                                  await supbaseClient
-                                      .from('device_types')
-                                      .insert({
-                                    'name': typecontroller.text,
-                                  });
-                                }
-
-                                setLoading(false);
-                                Navigator.of(context).pop();
-                              } catch (e) {
-                                errorText = e.toString();
-                                setLoading(false);
+                            errorText = '';
+                            setLoading(true);
+                            try {
+                              if (namecontroller.text.isNotEmpty) {
+                                await supbaseClient.from('brands').insert({
+                                  'name': namecontroller.text,
+                                });
                               }
+
+                              if (typecontroller.text.isNotEmpty) {
+                                await supbaseClient
+                                    .from('device_types')
+                                    .insert({
+                                  'name': typecontroller.text,
+                                });
+                              }
+
+                              setLoading(false);
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              errorText = e.toString();
+                              setLoading(false);
                             }
                           }
                         },
@@ -285,7 +283,7 @@ class _AddBrandsAndTypeState extends State<AddBrandsAndType> {
   ];
 }
 
- showDialogsShopPage(
+showDialogsShopPage(
     {required BuildContext context,
     required Function(dynamic value) returnValue}) async {
   return showDialog(

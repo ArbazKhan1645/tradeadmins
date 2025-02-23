@@ -16,7 +16,7 @@ class SupportHubLocations extends StatelessWidget {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 200, child: FilterWidget()),
+          SizedBox(width: 250, child: FilterWidget()),
           Expanded(
             child: controller.filterselectedMerchantLocations.isEmpty
                 ? const Center(

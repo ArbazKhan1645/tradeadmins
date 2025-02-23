@@ -1,11 +1,8 @@
 import 'package:get/get.dart';
-import 'package:partner_hub/app/models/models/users_model.dart/customer_models.dart';
+
 import 'package:partner_hub/app/modules/support_hub/location/controller.dart';
 
-import '../../../../main.dart';
-
 import '../model/order_model.dart';
-import 'dart:html' as html;
 
 class ProfileScreenController extends GetxController {
   final orders = <OrderModel>[].obs;
@@ -32,8 +29,8 @@ class ProfileScreenController extends GetxController {
       isLoading.value = true;
       final response = await supbaseClient.from('orders').select();
 
-      orders.value = List<OrderModel>.from(
-          response.map((json) => OrderModel.fromJson(json)));
+      orders.value = response.map((json) => OrderModel.fromJson(json)).toList();
+      orders.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch orders: $e');
     } finally {
@@ -43,9 +40,11 @@ class ProfileScreenController extends GetxController {
   }
 
   void subscribeToOrders() {
-    supbaseClient.from('orders').stream(primaryKey: ['order_id']).listen(
-        (List<Map<String, dynamic>> data) {
+    supbaseClient
+        .from('orders')
+        .stream(primaryKey: ['id']).listen((List<Map<String, dynamic>> data) {
       final newOrders = data.map((json) => OrderModel.fromJson(json)).toList();
+      newOrders.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
       orders.value = newOrders;
     });
   }
@@ -80,7 +79,7 @@ class ProfileScreenController extends GetxController {
       queryParameters: queryParams,
     ).toString();
 
-    html.window.history.pushState(null, '', newUrl);
+    // html.window.history.pushState(null, '', newUrl);
   }
 
   void resetBrowserURL() {
@@ -88,7 +87,7 @@ class ProfileScreenController extends GetxController {
       path: '/profile-screen/orders',
     ).toString();
 
-    html.window.history.pushState(null, '', newUrl);
+    // html.window.history.pushState(null, '', newUrl);
   }
 
   fetchupdatedUrls() {

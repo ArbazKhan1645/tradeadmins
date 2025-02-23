@@ -12,6 +12,7 @@ abstract class Routes {
   static const PEOPLES = _Paths.PEOPLES;
   static const Merchants = _Paths.Merchants;
   static const AUTHENTICATION = _Paths.AUTHENTICATION;
+  static const PROFILE_SCREEN = _Paths.PROFILE_SCREEN;
   static const SPORT_HUB = _Paths.SPORT_HUB;
   static const SHOP_PAGE = _Paths.SHOP_PAGE;
 
@@ -30,6 +31,7 @@ abstract class _Paths {
   static const STASTICS_BAR = '/stastics-bar';
   static const PEOPLES = '/peoples';
   static const Merchants = '/merchants';
+  static const PROFILE_SCREEN = '/profile-screen';
   static const AUTHENTICATION = '/authentication';
   static const SPORT_HUB = '/sport-hub';
   static const SHOP_PAGE = '/shop-page';
