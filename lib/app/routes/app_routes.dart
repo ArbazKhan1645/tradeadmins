@@ -19,6 +19,7 @@ abstract class Routes {
   static const PARTNER_DETAILS_NOTFOUND = _Paths.PARTNER_DETAILS_NOTFOUND;
   static const ORDERS_HISTORY = _Paths.ORDERS_HISTORY;
   static const WALLET = _Paths.WALLET;
+  static const FAQS = _Paths.FAQS;
 }
 
 abstract class _Paths {
@@ -39,4 +40,5 @@ abstract class _Paths {
   static const PARTNER_DETAILS_NOTFOUND = '/partner-details-notfound';
   static const ORDERS_HISTORY = '/orders-history';
   static const WALLET = '/wallet';
+  static const FAQS = '/faqs';
 }

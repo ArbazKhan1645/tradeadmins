@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:partner_hub/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:partner_hub/app/modules/faqs/views/faqs_view.dart';
 import 'package:partner_hub/app/modules/orders_history/views/orders_history_view.dart';
 import 'package:partner_hub/app/modules/peoples/views/peoples_view.dart';
 import 'package:partner_hub/app/modules/support_hub/views/support_hub_view.dart';
@@ -21,6 +22,8 @@ class HomeServices {
         return const OrdersHistoryView();
       case Routes.WALLET:
         return const WalletView();
+      case Routes.FAQS:
+        return const FaqsView();
 
       default:
         return Container();
@@ -35,21 +38,24 @@ class HomeServices {
           subCategory: [],
           iconData: Icons.desktop_windows_outlined,
           route: Routes.SPORT_HUB),
-
       DrawerMenuItems(
           isSelected: false,
           name: 'peoples',
           subCategory: [],
           iconData: Icons.diamond_outlined,
           route: Routes.PEOPLES),
-
       DrawerMenuItems(
           isSelected: false,
           name: 'Orders',
           subCategory: [],
           iconData: Icons.man_3_sharp,
           route: Routes.ORDERS_HISTORY),
-   
+      DrawerMenuItems(
+          isSelected: false,
+          name: 'Faqs',
+          subCategory: [],
+          iconData: Icons.format_quote_outlined,
+          route: Routes.FAQS),
     ];
   }
 }
