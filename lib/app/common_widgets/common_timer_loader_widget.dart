@@ -13,13 +13,13 @@ class CommonOrderProgressIndicator extends StatefulWidget {
   final Color remainingColor;
 
   const CommonOrderProgressIndicator({
-    Key? key,
+    super.key,
     required this.orderTime,
     required this.orderDuration,
     this.backgroundColor = Colors.grey,
     this.expiredColor = Colors.red,
     this.remainingColor = const Color.fromARGB(255, 8, 66, 10),
-  }) : super(key: key);
+  });
 
   @override
   _CommonOrderProgressIndicatorState createState() =>

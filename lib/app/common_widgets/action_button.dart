@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:partner_hub/app/constants/colors_constants.dart';
 
 Widget actionButton(String text, void Function() function) {
   return GestureDetector(

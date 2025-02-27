@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:partner_hub/app/api.dart';
 import 'package:partner_hub/app/models/models/mobile_phones_model.dart';
 import 'package:partner_hub/app/modules/profile_screen/controllers/profile_screen_controller.dart';
 import 'package:partner_hub/app/modules/profile_screen/model/order_model.dart';
@@ -72,15 +73,16 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextButton(
-                          onPressed: () {
-                            _showStatusDialog(
-                                context, controller.selectedOrder!);
-                          },
-                          child: Text(
-                            'Change Order Status',
-                            style: TextStyle(color: Colors.blue),
-                          ))
+                      if (controller.selectedOrder?.status != 'booked')
+                        TextButton(
+                            onPressed: () {
+                              _showStatusDialog(
+                                  context, controller.selectedOrder!);
+                            },
+                            child: Text(
+                              'Change Order Status',
+                              style: TextStyle(color: Colors.blue),
+                            ))
                     ],
                   ),
                   SizedBox(height: 8),
@@ -350,6 +352,12 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
             SizedBox(height: 12),
             Text(
                 'Delivery Method: ${controller.selectedOrder?.deliveryOption ?? 'No Delivery Option Selected'}'),
+            Text(
+                'Account Name: ${controller.selectedOrder?.accountName ?? 'No Account Name Added'}'),
+            Text(
+                'Account Number: ${controller.selectedOrder?.accountNumber ?? 'NO Account Number Selected'}'),
+            Text(
+                'Account Sort Code: ${controller.selectedOrder?.sortCode ?? 'NO Account Sort Code Added'}'),
             SizedBox(height: 4),
             Text(
                 'Total Amount to be Paid: £${controller.selectedOrder?.models?.fold<num>(0, (sum, element) => sum + (element.manage_price ?? 0))}.00'),
@@ -528,6 +536,18 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                   }).eq('id', order.id.toString());
                   controller.selectedOrder!.timeline =
                       timeline.map((ele) => ele).toList();
+                  await supbaseClient
+                      .from('users')
+                      .select()
+                      .eq('id', controller.selectedOrder!.customerId.toString())
+                      .single()
+                      .then((value) => {
+                            sendcustomEmail(
+                                value['email'].toString(),
+                                '${controller.selectedOrder!.firstName} ${controller.selectedOrder!.lastName}',
+                                reasonController.text)
+                          });
+
                   Get.back();
                   setState(() {});
                   controller.update();
@@ -638,6 +658,25 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                       counter.map((ele) => ele).toList();
                   controller.selectedOrder!.timeline =
                       timeline.map((ele) => ele).toList();
+                  await supbaseClient
+                      .from('users')
+                      .select()
+                      .eq('id', controller.selectedOrder!.customerId.toString())
+                      .single()
+                      .then((value) => {
+                            sendOrderCounterEmail(
+                                email: value['email'].toString(),
+                                customerName:
+                                    '${controller.selectedOrder!.firstName} ${controller.selectedOrder!.lastName}',
+                                issueReason: reasonController.text,
+                                offerAmount: double.parse(titleController.text),
+                                deviceDetails: '',
+                                acceptOfferLink:
+                                    'https://trademydevice.co.uk/profile-screen/orders?id=${controller.selectedOrder?.id?? 0}&offerrequest=accept',
+                                rejectOfferLink:
+                                    'https://trademydevice.co.uk/profile-screen/orders?id=${controller.selectedOrder?.id?? 0}&offerrequest=reject',
+                                websiteLink: 'https://trademydevice.co.uk')
+                          });
 
                   Get.back();
                   setState(() {});
@@ -669,7 +708,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       builder: (context) {
         return AlertDialog(
           title: Text('Select Status'),
-          content: Container(
+          content: SizedBox(
             width: 400,
             height: 500,
             child: GridView.builder(

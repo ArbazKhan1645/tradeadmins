@@ -7,10 +7,9 @@ import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView(
-      {Key? key,
+      {super.key,
       this.currentDrawer = 'Home',
-      this.currentScreen = Routes.SPORT_HUB})
-      : super(key: key);
+      this.currentScreen = Routes.SPORT_HUB});
   final String currentDrawer;
   final String currentScreen;
   @override

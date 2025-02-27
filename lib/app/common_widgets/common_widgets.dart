@@ -60,8 +60,8 @@ class OneTimeStreamBuilder<T> extends StatefulWidget {
   const OneTimeStreamBuilder({
     required this.streamFunction,
     required this.builder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _OneTimeStreamBuilderState<T> createState() =>

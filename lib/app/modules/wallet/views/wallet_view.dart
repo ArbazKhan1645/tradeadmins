@@ -6,7 +6,7 @@ import 'package:partner_hub/app/modules/wallet/pages/payment_history_widget.dart
 import '../controllers/wallet_controller.dart';
 
 class WalletView extends GetView<WalletController> {
-  const WalletView({Key? key}) : super(key: key);
+  const WalletView({super.key});
   @override
   Widget build(BuildContext context) {
     return GetBuilder<WalletController>(

@@ -103,7 +103,7 @@ class AuthenticationController extends GetxController {
           .signInWithPassword(email: email, password: password);
 
       if (value.user != null) {
-        final partnerValue = await fetchPartners();
+        final partnerValue = await fetchadmins();
         print(partnerValue);
         currentPartnerUser = partnerValue.firstWhere(
             (element) => element.email == email,
@@ -130,7 +130,7 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  Future<List<CustomerModel>> fetchPartners() async {
+  Future<List<CustomerModel>> fetchadmins() async {
     try {
       var data = await FetchSupabaseRepository.fetch<CustomerModel>(
         'users',

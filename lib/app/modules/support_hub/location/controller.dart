@@ -12,7 +12,7 @@ import 'package:partner_hub/app/models/bussiness_type_model.dart';
 import 'package:partner_hub/app/modules/support_hub/location/place_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../models/LocationModel.dart';
 import '../../../models/country_model.dart';
 import '../../../models/models/mobile_phones_model.dart';
@@ -21,6 +21,7 @@ final supbaseClient = Supabase.instance.client;
 
 class LocationControllerProvider extends GetxController {
   late Future<List<LocationModel>> locationsFuture;
+  final ImagePicker picker = ImagePicker();
   final GlobalKey<FormState> formKeysLocation = GlobalKey<FormState>();
   bool isLocationLoading = false;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
@@ -29,24 +30,36 @@ class LocationControllerProvider extends GetxController {
     update();
   }
 
-  Future pickImage() async {
+  Future<dynamic> pickImage() async {
     try {
-      File? selectedImage;
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-
-      if (result != null) {
-        selectedImage = File(result.files.single.path!);
-        return selectedImage;
+      // For web platform
+      if (kIsWeb) {
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          final bytes = await image.readAsBytes();
+          return bytes;
+        }
       }
+      // For mobile and desktop platforms
+      else {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['jpg', 'jpeg', 'png'],
+        );
+
+        if (result != null) {
+          return File(result.files.single.path!);
+        }
+      }
+      return null;
     } on Exception catch (e) {
       print(e);
+      return null;
     }
   }
 
-  File? selectedImage;
+  var selectedImage;
   bool isclickablePickImage = false;
   setisclickablePickImage() {
     isclickablePickImage = !isclickablePickImage;
@@ -214,7 +227,7 @@ class LocationControllerProvider extends GetxController {
 
   var isLoading = false;
   var alpha2Code;
-  var location = null;
+  var location;
 
   XFile? image;
   var merchantId = 0;
@@ -260,17 +273,28 @@ class LocationControllerProvider extends GetxController {
     } else {}
   }
 
-  Future<String> uploadImage(File? image) async {
+  Future<String> uploadImage(var image) async {
     try {
       if (image != null) {
-        String filename = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-        await supbaseClient.storage
-            .from('mobiles')
-            .upload('/phones_images/$filename', image);
-        String imageurl =
-            'https://hnyyuaeeasyhuytscoxk.supabase.co/storage/v1/object/public/mobiles/phones_images/$filename';
+        String fileName = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        if (image is Uint8List) {
+          String filePath = 'phones_images/$fileName';
+          await supbaseClient.storage
+              .from('mobiles')
+              .uploadBinary(filePath, image);
+          String imageurl =
+              'https://hnyyuaeeasyhuytscoxk.supabase.co/storage/v1/object/public/mobiles/phones_images/$fileName';
 
-        return imageurl;
+          return imageurl;
+        } else {
+          await supbaseClient.storage
+              .from('mobiles')
+              .upload('/phones_images/$fileName', image);
+          String imageurl =
+              'https://hnyyuaeeasyhuytscoxk.supabase.co/storage/v1/object/public/mobiles/phones_images/$fileName';
+
+          return imageurl;
+        }
       } else {
         return "";
       }

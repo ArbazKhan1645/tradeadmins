@@ -8,7 +8,7 @@ import '../controllers/stastics_bar_controller.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class StasticsBarView extends GetView<StasticsBarController> {
-  const StasticsBarView({Key? key}) : super(key: key);
+  const StasticsBarView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -64,6 +64,22 @@ class FAQController extends GetxController {
           snackPosition: SnackPosition.BOTTOM);
     }
   }
+
+  Future<void> deleteFAQ(int id) async {
+    try {
+      await _supabaseClient.from('faqs').delete().eq('id', id);
+
+      // Remove from local lists
+      faqItems.removeWhere((item) => item.id == id);
+      filteredItems.value = List.from(faqItems);
+
+      Get.snackbar('Success', 'FAQ deleted successfully',
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to delete FAQ: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
 }
 
 class FAQItem {
@@ -178,6 +194,11 @@ class FAQScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = controller.filteredItems[index];
                     return Obx(() => ExpansionTile(
+                          leading: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () =>
+                                _showDeleteConfirmationDialog(context, item),
+                          ),
                           title: Text(
                             item.question,
                             style: TextStyle(
@@ -213,6 +234,34 @@ class FAQScreen extends StatelessWidget {
         onPressed: () => _showAddFAQDialog(context),
         tooltip: 'Add FAQ',
         child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, FAQItem item) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Delete FAQ'),
+        content: Text('Are you sure you want to delete this FAQ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              controller.deleteFAQ(item.id);
+              Get.back(); // Close the dialog
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

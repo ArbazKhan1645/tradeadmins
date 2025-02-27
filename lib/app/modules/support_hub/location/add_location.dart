@@ -468,13 +468,15 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
                                                                                 BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                                                                             child:
                                                                                 Center(
-                                                                              child: e is File
-                                                                                  ? Image.file(
-                                                                                      e,
-                                                                                      width: 180,
-                                                                                      height: 180,
-                                                                                    )
-                                                                                  : Image.network(e),
+                                                                              child: e is Uint8List
+                                                                                  ? Image.memory(e, width: 180, height: 180)
+                                                                                  : e is File
+                                                                                      ? Image.file(
+                                                                                          e,
+                                                                                          width: 180,
+                                                                                          height: 180,
+                                                                                        )
+                                                                                      : Image.network(e),
                                                                             ),
                                                                           ),
                                                                           Positioned(
@@ -574,10 +576,7 @@ class _AddMobilePhoneDrawersState extends State<AddMobilePhoneDrawers> {
                                                             .first is String) {
                                                           imageUrl = controller
                                                               .imageslist.first;
-                                                        }
-                                                        if (controller
-                                                            .imageslist
-                                                            .first is File) {
+                                                        } else {
                                                           imageUrl = await controller
                                                               .uploadImage(
                                                                   controller

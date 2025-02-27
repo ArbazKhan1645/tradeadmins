@@ -6,7 +6,7 @@ class MyImageWidget extends StatelessWidget {
   final String imageUrl;
   final String placeholderImagePath = 'images/logo.png';
 
-  const MyImageWidget({Key? key, required this.imageUrl}) : super(key: key);
+  const MyImageWidget({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

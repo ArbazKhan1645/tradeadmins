@@ -192,7 +192,7 @@ class LocationsItemWidgetListview extends StatelessWidget {
                                                     .eq('id', location.id ?? 0);
                                                 con.initializedData();
                                                 return true;
-                                              } on Exception catch (e) {
+                                              } on Exception {
                                                 return false;
                                               }
                                             },

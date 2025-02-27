@@ -170,8 +170,7 @@ class _AddressSearchFieldState extends State<AddressSearchField> {
   }
 
  void _showOverlay() {
-  final overlay = Overlay.of(context);
-  if (overlay == null) return; // Ensure overlay is available
+  final overlay = Overlay.of(context); // Ensure overlay is available
 
   final renderBox = context.findRenderObject() as RenderBox?;
   if (renderBox != null) {

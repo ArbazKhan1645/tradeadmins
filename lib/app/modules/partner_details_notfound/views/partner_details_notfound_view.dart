@@ -12,7 +12,7 @@ import '../controllers/partner_details_notfound_controller.dart';
 
 class PartnerDetailsNotfoundView
     extends GetView<PartnerDetailsNotfoundController> {
-  const PartnerDetailsNotfoundView({Key? key}) : super(key: key);
+  const PartnerDetailsNotfoundView({super.key});
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

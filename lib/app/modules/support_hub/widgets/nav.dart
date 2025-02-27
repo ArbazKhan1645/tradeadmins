@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
-import '../../stastics_bar/dialogs/add_partner.dart';
 
 class NavigationBarWithDropdown extends StatelessWidget {
   const NavigationBarWithDropdown({super.key});
